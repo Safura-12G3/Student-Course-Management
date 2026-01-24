@@ -7,50 +7,114 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+
 public class Main extends Application {
+
+    private HashMap<String, String> users = new HashMap<>();
+    private final String FILE_NAME = "users.json";
+    private Gson gson = new Gson();
 
     @Override
     public void start(Stage stage) {
-        // Here we will create username and passwords
-        Label userLabel = new Label("Username:");
+        loadUsers();
+
+        javafx.scene.control.Label userLabel = new javafx.scene.control.Label("Username:");
         TextField userField = new TextField();
 
-        Label passLabel = new Label("Password:");
+        javafx.scene.control.Label passLabel = new javafx.scene.control.Label("Password:");
         PasswordField passField = new PasswordField();
-        
-        Button loginButton = new Button("Login");
-        Label message = new Label();
 
-        // Login Button
-        loginButton.setOnSction(e -> {
+        Button loginButton = new Button("Login");
+
+        javafx.scene.control.Label message = new javafx.scene.control.Label();
+
+        loginButton.setOnAction(e -> {
             String username = userField.getText();
             String password = passField.getText();
 
-            if(username.equals("admin) && password.equals("1234")) {
-            message.setText("Login successful!!"");
+            if (users.containsKey(username) && users.get(username).equals(password)) {
+                message.setText("Login successful!");
+            
+            // This is supposed to hide the login window
+            stage.hide();
+
+            // Open window
+            Stage dashboardStage = new Stage();
+            dashboardStage.setTitle("Dashboard");
+
+            VBox dashboardLayout = new VBox(10);
+            dashboardLayout.setPadding(new javafx.geometry.Insets(20));
+
+            Label welcomeLabel = new Label("Welcome, " + username + "!");
+            Button addStudentButton = new Button("Add Student");
+            Button viewStudentsButton = new Button("View Students");
+            
+            dashboardLayout.getChildren().addAll(welcomeLabel, addStudentButton, viewStudentsButton);
+
+            Scene dashboardScene = new Scene(dashboardLayout, 400, 300);
+            dashboardStage.setScene(dashboardScene);
+            dashboardStage.show();
+
             } else {
-                message.setText("Invalid username or password :(");
+                message.setText("Invalid username or password.");
             }
         });
-       // Layout
+
         GridPane grid = new GridPane();
         grid.setVgap(10);
         grid.setHgap(10);
-        
+
         grid.add(userLabel, 0, 0);
         grid.add(userField, 1, 0);
         grid.add(passLabel, 0, 1);
         grid.add(passField, 1, 1);
         grid.add(loginButton, 1, 2);
         grid.add(message, 1, 3);
-        
+
         Scene scene = new Scene(grid, 300, 200);
-        stage.setTitle("Login Screen");
+        stage.setTitle("Login System (JSON)");
         stage.setScene(scene);
         stage.show();
     }
 
+    private void loadUsers() {
+        try (FileReader reader = new FileReader(FILE_NAME)) {
+            Type type = new TypeToken<HashMap<String, String>>() {}.getType();
+            HashMap<String, String> data = gson.fromJson(reader, type);
+            if (data != null) {
+                users = data;
+            }
+        } catch (Exception e) {
+            System.out.println("No users.json found, starting empty.");
+        }
+    }
+
     public static void main(String[] args) {
         launch(args);
+
+        /* In order to make the code work, inside the terminal paste the following:
+        First paste this:
+        cd ~/Desktop/StudentCourseManagement/src
+
+        Then paste this:
+javac --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
+--add-modules javafx.controls,javafx.fxml \
+-cp "../lib/gson-2.10.1.jar" Main.java
+
+        Finally paste this:
+java --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
+--add-modules javafx.controls,javafx.fxml \
+-cp ".:../lib/gson-2.10.1.jar" Main
+        */
+
+        // Note: "admin", "1234"
+        
     }
 }
