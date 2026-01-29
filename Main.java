@@ -25,7 +25,7 @@ public class Main extends Application {
     private HashMap<String, String> users = new HashMap<>();
     private HashMap<String, Student> students = new HashMap<>();
 
-    // JSON file names
+    // JSON file names (users and students)
     private final String FILE_NAME = "users.json";
     private final String STUDENTS_FILE = "students.json";
 
@@ -104,7 +104,7 @@ public class Main extends Application {
                 addGrid.add(courseField, 1, 2);
                 addGrid.add(saveButton, 1, 3);
 
-                // Save button action/ logic
+                // Save button action
                 saveButton.setOnAction(e2 -> {
                     String name = nameField.getText();
                     String id = idField.getText();
@@ -114,8 +114,8 @@ public class Main extends Application {
                     if (!name.isEmpty() && !id.isEmpty() && !course.isEmpty()) {
                         Student newStudent = new Student(name, id, course);
                         // Store student using ID as key
-                        students.put(id, newStudent);
-                        saveStudents();
+                        students.put(id, newStudent); // add student
+                        saveStudents();               // save student immediately
                         addStage.close();
                         System.out.println("Student added " + name + ", " + id + ", " + course);
                     }
@@ -140,12 +140,24 @@ public class Main extends Application {
                 } else {
                     // Display each student
                     for (Student s : students.values()) {
+                        HBox studentRow = new HBox(10);
                         Label studentLabel = new Label(
                             "Name: " + s.getName() +
                             " | ID: " + s.getId() +
                             " | Course: " + s.getCourse()
                         );
-                        layout.getChildren().add(studentLabel);
+                        
+                        // The delete button
+                        Button deleteButton = new Button("Delete");
+                        deleteButton.setOnAction(ev2 -> {
+                            students.remove(s.getId());    // remove from HashMap
+                            saveStudents();                // save to the updated list
+                            studentRow.setVisible(false);  // remove from GUI 
+                            System.out.println("Delete student: " + s.getName());
+                        });
+
+                        studentRow.getChildren().addAll(studentLabel, deleteButton);
+                        layout.getChildren().add(studentRow);
                     }
                 }
 
@@ -153,7 +165,9 @@ public class Main extends Application {
                 viewStage.setScene(scene);
                 viewStage.show();
             });
+        
 
+            // Adding dashboard components
             dashboardLayout.getChildren().addAll(welcomeLabel, addStudentButton, viewStudentsButton);
 
             Scene dashboardScene = new Scene(dashboardLayout, 400, 300);
@@ -165,6 +179,8 @@ public class Main extends Application {
             }
         });
 
+
+        // Login screen layout
         GridPane grid = new GridPane();
         grid.setVgap(10);
         grid.setHgap(10);
@@ -182,6 +198,7 @@ public class Main extends Application {
         stage.show();
     }
 
+    // Loading users from JSON
     private void loadUsers() {
         try (FileReader reader = new FileReader(FILE_NAME)) {
             Type type = new TypeToken<HashMap<String, String>>() {}.getType();
@@ -194,7 +211,7 @@ public class Main extends Application {
         }
     }
 
-    // This is going to help save and list students added onto the JSON file.
+    // Saves and lists students added onto the JSON file.
     private void loadStudents() {
         try (FileReader reader = new FileReader(STUDENTS_FILE)) {
             Type type = new TypeToken<HashMap<String, Student>>() {}.getType();
@@ -211,13 +228,16 @@ public class Main extends Application {
     private void saveStudents() {
         try (FileWriter writer = new FileWriter(STUDENTS_FILE)) {
             gson.toJson(students, writer);
+            System.out.println("Students saved successfully!!");
         } catch (Exception e) {
-            System.out.println("Error saving students.");
+            System.out.println("Error saving students: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
         launch(args);
+    }
+}
 
         /* In order to make the code work, inside the terminal paste the following:
         First paste this:
@@ -227,7 +247,6 @@ public class Main extends Application {
        javac --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
 -cp "../lib/gson-2.10.1.jar" Main.java Student.java
-
         
         Finally paste this:
         java --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
@@ -236,7 +255,4 @@ public class Main extends Application {
 
         */
 
-        // Note: "admin" and "1234"
-        
-    }
-}
+        // Note: "admin", "1234"
