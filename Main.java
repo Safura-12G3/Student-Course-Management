@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.classfile.Label;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
@@ -21,25 +22,21 @@ public class Main extends Application {
     private HashMap<String, Student> students = new HashMap<>();
 
     private final String FILE_NAME = "users.json";
-    private final String STUDENTS_FILE = "students.json";
-
     private Gson gson = new Gson();
 
     @Override
     public void start(Stage stage) {
-        private HashMap<String, Student> students = new HashMap<>();
-        private final String STUDENTS_FILE = "students.json";
         loadUsers();
 
-        javafx.scene.control.Label userLabel = new javafx.scene.control.Label("Username:");
+        Label userLabel = new Label("Username:");
         TextField userField = new TextField();
 
-        javafx.scene.control.Label passLabel = new javafx.scene.control.Label("Password:");
+        Label passLabel = new Label("Password:");
         PasswordField passField = new PasswordField();
 
         Button loginButton = new Button("Login");
+        Label message = new Label();
 
-        javafx.scene.control.Label message = new javafx.scene.control.Label();
 
         loginButton.setOnAction(e -> {
             String username = userField.getText();
@@ -62,11 +59,14 @@ public class Main extends Application {
             Button addStudentButton = new Button("Add Student");
             Button viewStudentsButton = new Button("View Students");
             
-            Stage addStage = new Stage();
-            addStage.setTtitle("Add Student");
 
             addStudentButton.setOnAction(ev -> {
+                System.out.println("Add Student button clicked");
+
+                Stage addStage = new Stage();
                 addStage.setTitle("Add Student:");
+
+                addStage.show();
 
                 GridPane addGrid = new GridPane();
                 addGrid.setVgap(10);
@@ -149,15 +149,12 @@ public class Main extends Application {
         launch(args);
 
         /* In order to make the code work, inside the terminal paste the following:
-        First paste this:
+        paste this all in one go:
         cd ~/Desktop/StudentCourseManagement/src
-
-        Then paste this:
+rm *.class
 javac --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
--cp "../lib/gson-2.10.1.jar" Main.java
-
-        Finally paste this:
+-cp "../lib/gson-2.10.1.jar" Main.java Student.java
 java --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
 -cp ".:../lib/gson-2.10.1.jar" Main
