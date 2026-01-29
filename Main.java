@@ -66,7 +66,6 @@ public class Main extends Application {
                 Stage addStage = new Stage();
                 addStage.setTitle("Add Student:");
 
-                addStage.show();
 
                 GridPane addGrid = new GridPane();
                 addGrid.setVgap(10);
@@ -149,18 +148,23 @@ public class Main extends Application {
         launch(args);
 
         /* In order to make the code work, inside the terminal paste the following:
-        paste this all in one go:
+        First paste this:
         cd ~/Desktop/StudentCourseManagement/src
-rm *.class
-javac --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
+
+        Then paste this: 
+       javac --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
 -cp "../lib/gson-2.10.1.jar" Main.java Student.java
-java --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
+
+        
+        Finally paste this:
+        java --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
 -cp ".:../lib/gson-2.10.1.jar" Main
+
         */
 
-        // Note: "admin", "1234"
+        // Note: "admin" and "1234"
         
     }
 }
