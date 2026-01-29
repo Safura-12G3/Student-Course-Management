@@ -1,33 +1,46 @@
 // JAVA PROGRAMMING SEMESTER 1 - FINAL PROJECT
 // Student Course Management System - By: Safura
 
+// Here we are importing our JavaFX components and layouts.
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+// GSON imports
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+// Java utility and IO imports
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.lang.classfile.Label;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 
+// Main JavFX application class
 public class Main extends Application {
 
+    // Stores username-password pairs, stores students using ID as the key
     private HashMap<String, String> users = new HashMap<>();
     private HashMap<String, Student> students = new HashMap<>();
 
+    // JSON file names
     private final String FILE_NAME = "users.json";
+    private final String STUDENTS_FILE = "students.json";
+
+    // Gson object to read and write JSON
     private Gson gson = new Gson();
 
+    // Runs the JavaFX application
     @Override
     public void start(Stage stage) {
-        loadUsers();
 
+        // Loads users and students from JSON files
+        loadUsers();
+        loadStudents();
+
+        // Login screen components
         Label userLabel = new Label("Username:");
         TextField userField = new TextField();
 
@@ -38,28 +51,33 @@ public class Main extends Application {
         Label message = new Label();
 
 
+        // Handles the aftermath of clicking login button
         loginButton.setOnAction(e -> {
             String username = userField.getText();
             String password = passField.getText();
 
+            // Checks whether the username and password match
             if (users.containsKey(username) && users.get(username).equals(password)) {
                 message.setText("Login successful!");
             
-            // This is supposed to hide the login window
+            // Hides the login window
             stage.hide();
 
-            // Open window
+            // Create dashboard window
             Stage dashboardStage = new Stage();
             dashboardStage.setTitle("Dashboard");
 
+            // Layout for dashboard buttons
             VBox dashboardLayout = new VBox(10);
             dashboardLayout.setPadding(new javafx.geometry.Insets(20));
 
+            // Dashboard components
             Label welcomeLabel = new Label("Welcome, " + username + "!");
             Button addStudentButton = new Button("Add Student");
             Button viewStudentsButton = new Button("View Students");
             
 
+            // Opens a new window to add a student
             addStudentButton.setOnAction(ev -> {
                 System.out.println("Add Student button clicked");
 
@@ -86,14 +104,18 @@ public class Main extends Application {
                 addGrid.add(courseField, 1, 2);
                 addGrid.add(saveButton, 1, 3);
 
+                // Save button action/ logic
                 saveButton.setOnAction(e2 -> {
                     String name = nameField.getText();
                     String id = idField.getText();
                     String course = courseField.getText();
 
+                    // Ensures all fields are filled
                     if (!name.isEmpty() && !id.isEmpty() && !course.isEmpty()) {
                         Student newStudent = new Student(name, id, course);
+                        // Store student using ID as key
                         students.put(id, newStudent);
+                        saveStudents();
                         addStage.close();
                         System.out.println("Student added " + name + ", " + id + ", " + course);
                     }
@@ -103,7 +125,35 @@ public class Main extends Application {
                 addStage.setScene(addScene);
                 addStage.show();
             });
-            
+
+            // Opens a window displaying all students
+            viewStudentsButton.setOnAction(ev -> {
+                Stage viewStage = new Stage();
+                viewStage.setTitle("View Students");
+
+                VBox layout = new VBox(10);
+                layout.setPadding(new javafx.geometry.Insets(20));
+                
+                // If no students exist
+                if (students.isEmpty()) {
+                    layout.getChildren().add(new Label("No students added yet."));
+                } else {
+                    // Display each student
+                    for (Student s : students.values()) {
+                        Label studentLabel = new Label(
+                            "Name: " + s.getName() +
+                            " | ID: " + s.getId() +
+                            " | Course: " + s.getCourse()
+                        );
+                        layout.getChildren().add(studentLabel);
+                    }
+                }
+
+                Scene scene = new Scene(layout, 400, 300);
+                viewStage.setScene(scene);
+                viewStage.show();
+            });
+
             dashboardLayout.getChildren().addAll(welcomeLabel, addStudentButton, viewStudentsButton);
 
             Scene dashboardScene = new Scene(dashboardLayout, 400, 300);
@@ -141,6 +191,28 @@ public class Main extends Application {
             }
         } catch (Exception e) {
             System.out.println("No users.json found, starting empty.");
+        }
+    }
+
+    // This is going to help save and list students added onto the JSON file.
+    private void loadStudents() {
+        try (FileReader reader = new FileReader(STUDENTS_FILE)) {
+            Type type = new TypeToken<HashMap<String, Student>>() {}.getType();
+            HashMap<String, Student> data = gson.fromJson(reader, type);
+            if (data != null) {
+                students = data;
+            }
+        } catch (Exception e) {
+            System.out.println("No students.json found, starting empty.");
+        }
+    }
+
+    // Saves students HashMap to students.json
+    private void saveStudents() {
+        try (FileWriter writer = new FileWriter(STUDENTS_FILE)) {
+            gson.toJson(students, writer);
+        } catch (Exception e) {
+            System.out.println("Error saving students.");
         }
     }
 
