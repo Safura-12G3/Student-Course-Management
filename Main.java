@@ -149,10 +149,11 @@ public class Main extends Application {
                         
                         // The delete button
                         Button deleteButton = new Button("Delete");
+
                         deleteButton.setOnAction(ev2 -> {
-                            students.remove(s.getId());    // remove from HashMap
-                            saveStudents();                // save to the updated list
-                            studentRow.setVisible(false);  // remove from GUI 
+                            students.remove(s.getId());               // remove from HashMap
+                            saveStudents();                           // save to the updated list
+                            layout.getChildren().remove(studentRow);  // remove from GUI 
                             System.out.println("Delete student: " + s.getName());
                         });
 
