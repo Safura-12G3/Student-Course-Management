@@ -256,4 +256,4 @@ public class Main extends Application {
 
         */
 
-        // Note: "admin", "1234"
+        // Note: "admin" and "1234"
