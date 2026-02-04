@@ -36,13 +36,13 @@ The system supports adding, viewing, and deleting students, with data stored in 
 
 -- How To Run The Program --  
  1. In order to make the code work, open the terminal.
- 2. First paste this:
+ 2. Paste the following in order one at a time:
        cd ~/Desktop/StudentCourseManagement/src
- 3. Then paste this: 
+ 
        javac --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
 -cp "../lib/gson-2.10.1.jar" Main.java Student.java
- 4. Finally, paste this: 
+
        java --module-path "/Users/10G3/Downloads/javafx-sdk-25.0.1/lib" \
 --add-modules javafx.controls,javafx.fxml \
 -cp ".:../lib/gson-2.10.1.jar" Main
